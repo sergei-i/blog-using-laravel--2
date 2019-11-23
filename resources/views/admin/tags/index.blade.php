@@ -22,12 +22,12 @@
             <!-- Default box -->
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Список категорий</h3>
+                    <h3 class="box-title">Список тегов</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="form-group">
-                        <a href="{{ route('categories.create') }}" class="btn btn-success">Добавить</a>
+                        <a href="{{ route('tags.create') }}" class="btn btn-success">Добавить</a>
                     </div>
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
@@ -38,12 +38,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($categories as $category)
+                        @foreach($tags as $tag)
                             <tr>
-                                <td>{{ $category->id }}</td>
-                                <td>{{ $category->title }}</td>
-                                <td><a href="{{ route('categories.edit', $category->id) }}" class="fa fa-pencil"></a>
-                                    {{ Form::open(['route' => ['categories.destroy', $category->id], 'method' => 'delete']) }}
+                                <td>{{ $tag->id }}</td>
+                                <td>{{ $tag->title }}
+                                </td>
+                                <td><a href="{{ route('tags.edit', $tag->id) }}" class="fa fa-pencil"></a>
+                                    {{ Form::open(['route' => ['tags.destroy', $tag->id], 'method' => 'delete']) }}
                                     <button onclick="return confirm('Are you sure?')" type="submit" class="delete">
                                         <i class="fa fa-remove"></i>
                                     </button>

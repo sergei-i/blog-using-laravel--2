@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Category;
 use App\Http\Controllers\Controller;
+use App\Tag;
 use Illuminate\Http\Request;
 
-class CategoriesController extends Controller
+class TagsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +15,9 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $tags = Tag::all();
 
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.tags.index', compact('tags'));
     }
 
     /**
@@ -27,7 +27,7 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        return view('admin.categories.create');
+        return view('admin.tags.create');
     }
 
     /**
@@ -39,12 +39,12 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required|unique:categories,title'
+            'title' => 'required|unique:tags,title'
         ]);
 
-        Category::create($request->all());
+        Tag::create($request->all());
 
-        return redirect()->route('categories.index');
+        return redirect()->route('tags.index');
     }
 
     /**
@@ -66,9 +66,9 @@ class CategoriesController extends Controller
      */
     public function edit($id)
     {
-        $category = Category::find($id);
+        $tag = Tag::find($id);
 
-        return view('admin.categories.edit', compact('category'));
+        return view('admin.tags.edit', compact('tag'));
     }
 
     /**
@@ -81,14 +81,14 @@ class CategoriesController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'title' => 'required|unique:categories,title'
+            'title' => 'required|unique:tags,title'
         ]);
 
-        $category = Category::find($id);
+        $category = Tag::find($id);
 
         $category->update($request->all());
 
-        return redirect()->route('categories.index');
+        return redirect()->route('tags.index');
     }
 
     /**
@@ -99,8 +99,8 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        $category = Category::find($id)->delete();
+        $category = Tag::find($id)->delete();
 
-        return redirect()->route('categories.index');
+        return redirect()->route('tags.index');
     }
 }
