@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -13,19 +14,19 @@ class Post extends Model
 
     const IS_DRAFT = 0;
     const IS_PUBLIC = 1;
-    const IS_STANDART = 0;
+    const IS_STANDARD = 0;
     const IS_FEATURED = 1;
 
-    protected $fillable = ['title', 'content'];
+    protected $fillable = ['title', 'content', 'date'];
 
     public function category()
     {
-        return $this->hasOne(Category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function author()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function tags()
@@ -52,7 +53,7 @@ class Post extends Model
         ];
     }
 
-    public function add($fields)
+    public static function add($fields)
     {
         $post = new static;
         $post->fill($fields);
@@ -70,7 +71,7 @@ class Post extends Model
 
     public function remove()
     {
-        Storage::delete('uploads/' . $this->image);
+        $this->removeImage();
         $this->delete();
     }
 
@@ -80,12 +81,23 @@ class Post extends Model
             return;
         }
 
-        Storage::delete('uploads/' . $this->image);
+        $this->removeImage();
+
+        if ($this->image != null) {
+            Storage::delete('uploads/' . $this->image);
+        }
 
         $filename = Str::random(10) . '.' . $image->extension();
-        $image->saveAs('uploads', $filename);
+        $image->storeAs('uploads', $filename);
         $this->image = $filename;
         $this->save();
+    }
+
+    public function removeImage()
+    {
+        if ($this->image != null) {
+            Storage::delete('uploads/' . $this->image);
+        }
     }
 
     public function getImage()
@@ -143,12 +155,40 @@ class Post extends Model
 
     public function setStandart()
     {
-        $this->is_featured = self::IS_STANDART;
+        $this->is_featured = self::IS_STANDARD;
         $this->save();
     }
 
     public function toggleFeatured($value)
     {
         return $value == null ? $this->setStandart() : $this->setFeatured();
+    }
+
+    public function setDateAttribute($value)
+    {
+        $date = Carbon::createFromFormat('d/m/y', $value)->format('Y-m-d');
+
+        $this->attributes['date'] = $date;
+    }
+
+    public function getDateAttribute($value)
+    {
+        $date = Carbon::createFromFormat('Y-m-d', $value)->format('d/m/y');
+
+        return $date;
+    }
+
+    public function getCategoryTitle()
+    {
+        return $this->category != null
+            ? $this->category->title
+            : 'Нет категории';
+    }
+
+    public function getTagsTitles()
+    {
+        return (!$this->tags->isEmpty())
+            ? implode(', ', $this->tags->pluck('title')->all())
+            : 'Нет тегов';
     }
 }
