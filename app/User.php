@@ -58,7 +58,7 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function add($fields)
+    public static function add($fields)
     {
         $user = new static;
         $user->fill($fields);
@@ -86,22 +86,23 @@ class User extends Authenticatable
         if ($image == null) {
             return;
         }
-
-        Storage::delete('uploads/' . $this->image);
+        if ($this->avatar != null) {
+            Storage::delete('uploads/' . $this->avatar);
+        }
 
         $filename = Str::random(10) . '.' . $image->extension();
-        $image->saveAs('uploads', $filename);
-        $this->image = $filename;
+        $image->storeAs('uploads', $filename);
+        $this->avatar = $filename;
         $this->save();
     }
 
     public function getAvatar()
     {
-        if ($this->image == null) {
-            return '/img/no-user-image.png';
+        if ($this->avatar == null) {
+            return '/img/no-image.png';
         }
 
-        return '/uploads/' . $this->image;
+        return '/uploads/' . $this->avatar;
     }
 
     public function makeAdmin()
