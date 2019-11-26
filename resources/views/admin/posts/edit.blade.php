@@ -43,7 +43,7 @@
                             {{ Form::select(
                                 'category_id',
                                 $categories,
-                                $post->category->id,
+                                $post->getCategoryID(),
                                 ['class' => 'form-control select2'])
                              }}
                         </div>
@@ -95,8 +95,16 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
+                            <label for="exampleInputEmail1">Описание</label>
+                            <textarea name="description" cols="30" rows="10"
+                                      class="form-control">{{ $post->description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
                             <label for="exampleInputEmail1">Полный текст</label>
-                            <textarea name="content" id="" cols="30" rows="10" class="form-control">{{ $post->content }}</textarea>
+                            <textarea name="content" id="" cols="30" rows="10"
+                                      class="form-control">{{ $post->content }}</textarea>
                         </div>
                     </div>
                 </div>
